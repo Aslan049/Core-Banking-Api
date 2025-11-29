@@ -2,15 +2,18 @@ package com.aslankorkmaz.Core.Banking.API.service.imp;
 
 import com.aslankorkmaz.Core.Banking.API.dto.CustomerCreateRequest;
 import com.aslankorkmaz.Core.Banking.API.dto.CustomerResponse;
+import com.aslankorkmaz.Core.Banking.API.dto.CustomerUpdateRequest;
 import com.aslankorkmaz.Core.Banking.API.entity.Customer;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerNotFoundException;
 import com.aslankorkmaz.Core.Banking.API.repository.IAccountRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ICustomerRepository;
 import com.aslankorkmaz.Core.Banking.API.service.ICustomerService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,16 +28,21 @@ public class CustomerServiceImp implements ICustomerService {
         this.accountRepository = accountRepository;
     }
 
+    @Transactional
     @Override
     public CustomerResponse createCustomer(CustomerCreateRequest customerCreateRequest) {
         CustomerResponse customerResponse = new CustomerResponse();
         Customer customer = new Customer();
         BeanUtils.copyProperties(customerCreateRequest, customer);
+        if(customer.getCreatedAt() == null) {
+            customer.setCreatedAt(LocalDate.now());
+        }
         Customer savedCustomer =  customerRepository.save(customer);
         BeanUtils.copyProperties(savedCustomer, customerResponse);
         return customerResponse;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public CustomerResponse getCustomerById(Long id) {
         Customer customer = customerRepository.findById(id)
@@ -45,6 +53,7 @@ public class CustomerServiceImp implements ICustomerService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<CustomerResponse> getAllCustomers() {
         List<Customer> customers = customerRepository.findAll();
@@ -57,8 +66,9 @@ public class CustomerServiceImp implements ICustomerService {
         return customerResponseList;
     }
 
+    @Transactional
     @Override
-    public CustomerResponse updateCustomer(CustomerCreateRequest request, Long id) {
+    public CustomerResponse updateCustomer(CustomerUpdateRequest request, Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
         BeanUtils.copyProperties(request, customer,"id","createdAt");
@@ -73,5 +83,6 @@ public class CustomerServiceImp implements ICustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
         customerRepository.delete(customer);
+
     }
 }

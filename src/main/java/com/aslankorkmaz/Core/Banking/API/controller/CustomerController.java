@@ -1,7 +1,8 @@
-package com.aslankorkmaz.Core.Banking.API;
+package com.aslankorkmaz.Core.Banking.API.controller;
 
 import com.aslankorkmaz.Core.Banking.API.dto.CustomerCreateRequest;
 import com.aslankorkmaz.Core.Banking.API.dto.CustomerResponse;
+import com.aslankorkmaz.Core.Banking.API.dto.CustomerUpdateRequest;
 import com.aslankorkmaz.Core.Banking.API.service.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +12,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/customer")
-public class Controller {
+public class CustomerController {
 
     private ICustomerService customerService;
     @Autowired
-    public Controller(ICustomerService customerService) {
+    public CustomerController(ICustomerService customerService) {
         this.customerService = customerService;
     }
 
@@ -32,6 +33,17 @@ public class Controller {
     @GetMapping("/{id}")
     public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.getCustomerById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerResponse> updateCustomer(@RequestBody CustomerUpdateRequest request, @PathVariable Long id) {
+        return ResponseEntity.ok(customerService.updateCustomer(request, id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CustomerResponse> deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+        return ResponseEntity.ok().build();
     }
 
 }

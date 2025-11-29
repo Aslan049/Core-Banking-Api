@@ -34,6 +34,6 @@ public class Customer {
     private String email;
 
     @Column(name = "created_at")
-    private LocalDate createdAt =  LocalDate.now();
+    private LocalDate createdAt = LocalDate.now();
 
 }
