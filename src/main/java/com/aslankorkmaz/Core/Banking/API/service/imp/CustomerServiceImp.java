@@ -1,9 +1,9 @@
 package com.aslankorkmaz.Core.Banking.API.service.imp;
 
-import com.aslankorkmaz.Core.Banking.API.dto.CustomerCreateRequest;
-import com.aslankorkmaz.Core.Banking.API.dto.CustomerResponse;
-import com.aslankorkmaz.Core.Banking.API.dto.CustomerUpdateRequest;
-import com.aslankorkmaz.Core.Banking.API.entity.Customer;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerCreateRequest;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerResponse;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerUpdateRequest;
+import com.aslankorkmaz.Core.Banking.API.entity.customer.Customer;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerNotFoundException;
 import com.aslankorkmaz.Core.Banking.API.repository.IAccountRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ICustomerRepository;

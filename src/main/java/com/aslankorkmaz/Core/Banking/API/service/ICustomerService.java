@@ -1,9 +1,8 @@
 package com.aslankorkmaz.Core.Banking.API.service;
 
-import com.aslankorkmaz.Core.Banking.API.dto.CustomerCreateRequest;
-import com.aslankorkmaz.Core.Banking.API.dto.CustomerResponse;
-import com.aslankorkmaz.Core.Banking.API.dto.CustomerUpdateRequest;
-import com.aslankorkmaz.Core.Banking.API.entity.Customer;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerCreateRequest;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerResponse;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerUpdateRequest;
 
 import java.util.List;
 

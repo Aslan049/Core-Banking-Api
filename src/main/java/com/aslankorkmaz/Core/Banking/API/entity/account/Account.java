@@ -1,5 +1,6 @@
-package com.aslankorkmaz.Core.Banking.API.entity;
+package com.aslankorkmaz.Core.Banking.API.entity.account;
 
+import com.aslankorkmaz.Core.Banking.API.entity.customer.Customer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,22 +20,23 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="iban", unique = true)
+    @Column(name="iban", unique = true, nullable = false)
     private String iban;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
-    @Column(name="currency")
-    private String currency;
+    @Column(name="currency", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MoneyTypeEnum currency;
 
     @Column(name="balance")
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
 
-    private enum statusEnum {
-        ACTIVE,
-        LOCKED,
-        CLOSED
-    }
 
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status  = AccountStatus.ACTIVE;
+
+    @Version
+    private Long version;
 }

@@ -1,11 +1,11 @@
-package com.aslankorkmaz.Core.Banking.API.entity;
+package com.aslankorkmaz.Core.Banking.API.entity.transaction;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Getter
@@ -20,18 +20,14 @@ public class Transaction {
     private BigDecimal amount;
     private String currency;
 
-    private enum typeEnum {
-        DEPOSIT,
-        WITHDRAW,
-        TRANSFER
-    }
-    private enum statusEnum {
-        PENDING,
-        SUCCESS,
-        FAILED
-    }
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Enumerated(EnumType.STRING)
+    private TransactionStatusEnum statusEnum;
+
+
+    private Instant createdAt = Instant.now();
 
     private String description;
 

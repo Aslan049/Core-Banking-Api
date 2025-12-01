@@ -1,4 +1,4 @@
-package com.aslankorkmaz.Core.Banking.API.entity;
+package com.aslankorkmaz.Core.Banking.API.entity.customer;
 
 
 import jakarta.persistence.*;
