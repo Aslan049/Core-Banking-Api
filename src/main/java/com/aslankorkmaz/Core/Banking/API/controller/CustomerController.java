@@ -4,6 +4,7 @@ import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerCreateRequest;
 import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerResponse;
 import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerUpdateRequest;
 import com.aslankorkmaz.Core.Banking.API.service.ICustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class CustomerController {
     }
 
     @PostMapping()
-    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody CustomerCreateRequest customerCreateRequest) {
+    public ResponseEntity<CustomerResponse> createCustomer(@Valid @RequestBody CustomerCreateRequest customerCreateRequest) {
         return ResponseEntity.ok(customerService.createCustomer(customerCreateRequest));
     }
 

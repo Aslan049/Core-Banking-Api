@@ -4,6 +4,7 @@ import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerCreateRequest;
 import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerResponse;
 import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerUpdateRequest;
 import com.aslankorkmaz.Core.Banking.API.entity.customer.Customer;
+import com.aslankorkmaz.Core.Banking.API.exception.CustomerAlreadyExists;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerNotFoundException;
 import com.aslankorkmaz.Core.Banking.API.repository.IAccountRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ICustomerRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +33,21 @@ public class CustomerServiceImp implements ICustomerService {
     @Transactional
     @Override
     public CustomerResponse createCustomer(CustomerCreateRequest customerCreateRequest) {
-        CustomerResponse customerResponse = new CustomerResponse();
+
+       if(customerRepository.existsByIdentityNumber(customerCreateRequest.getIdentityNumber())) {
+           throw new CustomerAlreadyExists("Customer Already Exists with Identity Number: "+customerCreateRequest.getIdentityNumber());
+       }
+
         Customer customer = new Customer();
-        BeanUtils.copyProperties(customerCreateRequest, customer);
-        if(customer.getCreatedAt() == null) {
-            customer.setCreatedAt(LocalDate.now());
-        }
+        customer.setCreatedAt(LocalDateTime.now());
+        customer.setEmail(customerCreateRequest.getEmail());
+        customer.setFirstName(customerCreateRequest.getFirstName());
+        customer.setLastName(customerCreateRequest.getLastName());
+        customer.setIdentityNumber(customerCreateRequest.getIdentityNumber());
+
         Customer savedCustomer =  customerRepository.save(customer);
-        BeanUtils.copyProperties(savedCustomer, customerResponse);
-        return customerResponse;
+
+        return mapToResponse(savedCustomer);
     }
 
     @Transactional(readOnly = true)
@@ -47,9 +55,8 @@ public class CustomerServiceImp implements ICustomerService {
     public CustomerResponse getCustomerById(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
-        CustomerResponse customerResponse = new CustomerResponse();
-        BeanUtils.copyProperties(customer, customerResponse);
-        return customerResponse;
+
+        return mapToResponse(customer);
 
     }
 
@@ -59,9 +66,8 @@ public class CustomerServiceImp implements ICustomerService {
         List<Customer> customers = customerRepository.findAll();
         List<CustomerResponse> customerResponseList = new ArrayList<>();
         for (Customer customer : customers) {
-            CustomerResponse customerResponse = new CustomerResponse();
-            BeanUtils.copyProperties(customer, customerResponse);
-            customerResponseList.add(customerResponse);
+            mapToResponse(customer);
+            customerResponseList.add(mapToResponse(customer));
         }
         return customerResponseList;
     }
@@ -71,18 +77,34 @@ public class CustomerServiceImp implements ICustomerService {
     public CustomerResponse updateCustomer(CustomerUpdateRequest request, Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
-        BeanUtils.copyProperties(request, customer,"id","createdAt");
+
+        customer.setFirstName(request.getFirstName());
+        customer.setLastName(request.getLastName());
+        customer.setEmail(request.getEmail());
+
+
         Customer updatedCustomer = customerRepository.save(customer);
-        CustomerResponse customerResponse = new CustomerResponse();
-        BeanUtils.copyProperties(updatedCustomer, customerResponse);
-        return customerResponse;
+
+        return mapToResponse(updatedCustomer);
     }
 
     @Override
+    @Transactional
     public void deleteCustomer(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
         customerRepository.delete(customer);
+    }
 
+
+    private CustomerResponse mapToResponse(Customer customer) {
+        CustomerResponse customerResponse = new CustomerResponse();
+        customerResponse.setId(customer.getId());
+        customerResponse.setEmail(customer.getEmail());
+        customerResponse.setFirstName(customer.getFirstName());
+        customerResponse.setLastName(customer.getLastName());
+        customerResponse.setCreatedAt(customer.getCreatedAt());
+        customerResponse.setIdentityNumber(customer.getIdentityNumber());
+        return customerResponse;
     }
 }

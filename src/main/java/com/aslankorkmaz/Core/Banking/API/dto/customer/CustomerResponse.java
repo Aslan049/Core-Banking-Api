@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -14,5 +15,5 @@ public class CustomerResponse {
     private String lastName;
     private String identityNumber;
     private String email;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }
