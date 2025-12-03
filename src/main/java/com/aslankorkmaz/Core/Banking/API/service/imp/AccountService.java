@@ -8,6 +8,7 @@ import com.aslankorkmaz.Core.Banking.API.entity.account.MoneyTypeEnum;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.Transaction;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionStatusEnum;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionType;
+import com.aslankorkmaz.Core.Banking.API.exception.AccountAlreadyExistsException;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerNotFoundException;
 import com.aslankorkmaz.Core.Banking.API.repository.IAccountRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ICustomerRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -39,10 +41,16 @@ public class AccountService implements IAccountService {
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
 
+        MoneyTypeEnum moneyTypeEnum = MoneyTypeEnum.fromString(request.getCurrency());
+
+        if(accountRepository.existsByCustomerAndCurrency(customer,moneyTypeEnum)) {
+            throw new AccountAlreadyExistsException(customer.getFirstName() + " " + customer.getLastName() + " has account Already Exists " + moneyTypeEnum.name());
+        }
+
         Account account = new Account();
         account.setIban(generateIban());
         account.setCustomer(customer);
-        account.setCurrency(MoneyTypeEnum.TRY);
+        account.setCurrency(moneyTypeEnum);
         account.setBalance(request.getInitialDeposit() == null ? BigDecimal.ZERO : request.getInitialDeposit());
         Account saveAccount = accountRepository.save(account);
 
@@ -64,7 +72,7 @@ public class AccountService implements IAccountService {
         accountResponse.setBalance(saveAccount.getBalance());
         accountResponse.setCustomerId(saveAccount.getCustomer().getId());
         accountResponse.setId(saveAccount.getId());
-        accountResponse.setInitialDeposit(request.getInitialDeposit());
+        accountResponse.setInitialDeposit(saveAccount.getBalance());
 
         return accountResponse;
     }
