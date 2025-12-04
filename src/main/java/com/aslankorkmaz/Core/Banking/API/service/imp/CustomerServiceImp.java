@@ -97,7 +97,7 @@ public class CustomerServiceImp implements ICustomerService {
     }
 
 
-    private CustomerResponse mapToResponse(Customer customer) {
+    private static CustomerResponse mapToResponse(Customer customer) {
         CustomerResponse customerResponse = new CustomerResponse();
         customerResponse.setId(customer.getId());
         customerResponse.setEmail(customer.getEmail());

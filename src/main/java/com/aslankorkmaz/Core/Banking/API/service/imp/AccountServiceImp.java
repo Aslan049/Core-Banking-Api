@@ -19,17 +19,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class AccountService implements IAccountService {
+public class AccountServiceImp implements IAccountService {
 
     private final IAccountRepository accountRepository;
     private final ICustomerRepository customerRepository;
     private final ITransactionRepository transactionRepository;
     @Autowired
-    public AccountService(IAccountRepository accountRepository,ICustomerRepository customerRepository,ITransactionRepository transactionRepository) {
+    public AccountServiceImp(IAccountRepository accountRepository, ICustomerRepository customerRepository, ITransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
         this.transactionRepository = transactionRepository;
@@ -60,7 +59,7 @@ public class AccountService implements IAccountService {
             transaction.setFromIban(null);
             transaction.setToIban(saveAccount.getIban());
             transaction.setAmount(request.getInitialDeposit());
-            transaction.setCurrency(request.getCurrency());
+            transaction.setCurrency(MoneyTypeEnum.fromString(request.getCurrency()));
             transaction.setType(TransactionType.DEPOSIT);
             transaction.setStatusEnum(TransactionStatusEnum.SUCCESS);
             transactionRepository.save(transaction);

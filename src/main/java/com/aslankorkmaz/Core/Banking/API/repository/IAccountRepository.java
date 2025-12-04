@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface IAccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByIban(String iban);
     boolean existsByCustomerAndCurrency(Customer customer, MoneyTypeEnum currency);
+
 }
