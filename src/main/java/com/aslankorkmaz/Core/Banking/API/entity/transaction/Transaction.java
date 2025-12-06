@@ -15,7 +15,7 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private Long accountId;
     private String fromIban;
     private String toIban;
     private BigDecimal amount;

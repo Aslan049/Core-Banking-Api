@@ -1,8 +1,8 @@
 package com.aslankorkmaz.Core.Banking.API.controller;
 
 import com.aslankorkmaz.Core.Banking.API.dto.transaction.DepositRequest;
-import com.aslankorkmaz.Core.Banking.API.dto.transaction.TransactionCreateDto;
 import com.aslankorkmaz.Core.Banking.API.dto.transaction.TransactionResponse;
+import com.aslankorkmaz.Core.Banking.API.dto.transaction.WithdrawRequest;
 import com.aslankorkmaz.Core.Banking.API.service.ITransactionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,6 +24,11 @@ public class TransactionController {
     @PostMapping("/deposit")
     public ResponseEntity<TransactionResponse> deposit(@Valid @RequestBody DepositRequest depositRequest) {
         return ResponseEntity.ok(transactionService.deposit(depositRequest));
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<TransactionResponse> withdraw(@Valid @RequestBody WithdrawRequest withdrawRequest) {
+        return ResponseEntity.ok(transactionService.withdraw(withdrawRequest));
     }
 
 }

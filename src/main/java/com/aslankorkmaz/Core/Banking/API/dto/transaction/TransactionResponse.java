@@ -28,5 +28,6 @@ public class TransactionResponse {
     private TransactionStatusEnum statusEnum;
     private String description;
     private Instant createdAt;
+    private BigDecimal updatedBalance;
 
 }
