@@ -28,7 +28,7 @@ public class Account {
 
     @Column(name="currency", nullable = false)
     @Enumerated(EnumType.STRING)
-    private MoneyTypeEnum currency;
+    private Currency currency;
 
     @Column(name="balance")
     private BigDecimal balance = BigDecimal.ZERO;

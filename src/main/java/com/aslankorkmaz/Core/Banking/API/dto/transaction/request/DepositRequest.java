@@ -1,6 +1,6 @@
-package com.aslankorkmaz.Core.Banking.API.dto.transaction;
+package com.aslankorkmaz.Core.Banking.API.dto.transaction.request;
 
-import com.aslankorkmaz.Core.Banking.API.entity.account.MoneyTypeEnum;
+import com.aslankorkmaz.Core.Banking.API.entity.account.Currency;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +16,6 @@ public class DepositRequest {
     @NotNull
     private BigDecimal amount;
     @NotNull
-    private MoneyTypeEnum currency;
+    private Currency currency;
     private String description;
 }

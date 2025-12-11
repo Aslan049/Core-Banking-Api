@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class CoreBankingApiApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
+        System.out.println("This is the test context");
 	}
 
 }

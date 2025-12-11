@@ -4,7 +4,7 @@ import com.aslankorkmaz.Core.Banking.API.dto.account.AccountCreateRequest;
 import com.aslankorkmaz.Core.Banking.API.dto.account.AccountResponse;
 import com.aslankorkmaz.Core.Banking.API.entity.account.Account;
 import com.aslankorkmaz.Core.Banking.API.entity.customer.Customer;
-import com.aslankorkmaz.Core.Banking.API.entity.account.MoneyTypeEnum;
+import com.aslankorkmaz.Core.Banking.API.entity.account.Currency;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.Transaction;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionStatusEnum;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionType;
@@ -40,7 +40,7 @@ public class AccountServiceImp implements IAccountService {
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
 
-        MoneyTypeEnum moneyTypeEnum = MoneyTypeEnum.fromString(request.getCurrency());
+        Currency moneyTypeEnum = Currency.fromString(request.getCurrency());
 
         if(accountRepository.existsByCustomerAndCurrency(customer,moneyTypeEnum)) {
             throw new AccountAlreadyExistsException(customer.getFirstName() + " " + customer.getLastName() + " has account Already Exists " + moneyTypeEnum.name());
@@ -59,7 +59,7 @@ public class AccountServiceImp implements IAccountService {
             transaction.setFromIban(null);
             transaction.setToIban(saveAccount.getIban());
             transaction.setAmount(request.getInitialDeposit());
-            transaction.setCurrency(MoneyTypeEnum.fromString(request.getCurrency()));
+            transaction.setCurrency(Currency.fromString(request.getCurrency()));
             transaction.setType(TransactionType.DEPOSIT);
             transaction.setStatusEnum(TransactionStatusEnum.SUCCESS);
             transactionRepository.save(transaction);

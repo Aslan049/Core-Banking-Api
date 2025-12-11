@@ -1,6 +1,6 @@
-package com.aslankorkmaz.Core.Banking.API.dto.transaction;
+package com.aslankorkmaz.Core.Banking.API.dto.transaction.request;
 
-import com.aslankorkmaz.Core.Banking.API.entity.account.MoneyTypeEnum;
+import com.aslankorkmaz.Core.Banking.API.entity.account.Currency;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class WithdrawRequest {
     @NotNull
     private BigDecimal amount;
     @NotNull
-    private MoneyTypeEnum currency;
+    private Currency currency;
     @NotBlank
     private String fromIban;
     private String description;

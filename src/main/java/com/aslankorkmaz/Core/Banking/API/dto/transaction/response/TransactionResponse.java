@@ -1,19 +1,20 @@
-package com.aslankorkmaz.Core.Banking.API.dto.transaction;
+package com.aslankorkmaz.Core.Banking.API.dto.transaction.response;
 
-import com.aslankorkmaz.Core.Banking.API.entity.account.MoneyTypeEnum;
+import com.aslankorkmaz.Core.Banking.API.entity.account.Currency;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionStatusEnum;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransactionResponse {
 
     private Long id;
@@ -21,7 +22,7 @@ public class TransactionResponse {
     private String toIban;
     private BigDecimal amount;
 
-    private MoneyTypeEnum currency;
+    private Currency currency;
 
     private TransactionType type;
 
@@ -29,5 +30,4 @@ public class TransactionResponse {
     private String description;
     private Instant createdAt;
     private BigDecimal updatedBalance;
-
 }

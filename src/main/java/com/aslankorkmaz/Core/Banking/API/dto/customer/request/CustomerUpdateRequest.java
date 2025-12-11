@@ -1,4 +1,4 @@
-package com.aslankorkmaz.Core.Banking.API.dto.customer;
+package com.aslankorkmaz.Core.Banking.API.dto.customer.request;
 
 import lombok.Getter;
 import lombok.Setter;

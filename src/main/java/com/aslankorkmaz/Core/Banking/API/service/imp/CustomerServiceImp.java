@@ -1,20 +1,16 @@
 package com.aslankorkmaz.Core.Banking.API.service.imp;
 
-import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerCreateRequest;
-import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerResponse;
-import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerUpdateRequest;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.request.CustomerCreateRequest;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.response.CustomerResponse;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.request.CustomerUpdateRequest;
 import com.aslankorkmaz.Core.Banking.API.entity.customer.Customer;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerAlreadyExists;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerNotFoundException;
-import com.aslankorkmaz.Core.Banking.API.repository.IAccountRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ICustomerRepository;
 import com.aslankorkmaz.Core.Banking.API.service.ICustomerService;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +19,9 @@ import java.util.List;
 public class CustomerServiceImp implements ICustomerService {
 
     private final ICustomerRepository customerRepository;
-    private final IAccountRepository accountRepository;
     @Autowired
-    public CustomerServiceImp(ICustomerRepository customerRepository, IAccountRepository accountRepository) {
-        this.customerRepository = customerRepository;
-        this.accountRepository = accountRepository;
-    }
+    public CustomerServiceImp(ICustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;}
 
     @Transactional
     @Override

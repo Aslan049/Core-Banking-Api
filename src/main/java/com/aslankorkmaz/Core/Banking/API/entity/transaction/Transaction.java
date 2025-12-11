@@ -1,6 +1,6 @@
 package com.aslankorkmaz.Core.Banking.API.entity.transaction;
 
-import com.aslankorkmaz.Core.Banking.API.entity.account.MoneyTypeEnum;
+import com.aslankorkmaz.Core.Banking.API.entity.account.Currency;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +20,7 @@ public class Transaction {
     private String toIban;
     private BigDecimal amount;
     @Enumerated(EnumType.STRING)
-    private MoneyTypeEnum currency;
+    private Currency currency;
 
     @Enumerated(EnumType.STRING)
     private TransactionType type;

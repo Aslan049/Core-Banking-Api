@@ -1,8 +1,8 @@
 package com.aslankorkmaz.Core.Banking.API.controller;
 
-import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerCreateRequest;
-import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerResponse;
-import com.aslankorkmaz.Core.Banking.API.dto.customer.CustomerUpdateRequest;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.request.CustomerCreateRequest;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.response.CustomerResponse;
+import com.aslankorkmaz.Core.Banking.API.dto.customer.request.CustomerUpdateRequest;
 import com.aslankorkmaz.Core.Banking.API.service.ICustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

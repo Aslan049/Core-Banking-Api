@@ -1,8 +1,7 @@
-package com.aslankorkmaz.Core.Banking.API.dto.customer;
+package com.aslankorkmaz.Core.Banking.API.dto.customer.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
