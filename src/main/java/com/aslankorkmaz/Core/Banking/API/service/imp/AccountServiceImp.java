@@ -9,6 +9,7 @@ import com.aslankorkmaz.Core.Banking.API.entity.transaction.Transaction;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionStatusEnum;
 import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionType;
 import com.aslankorkmaz.Core.Banking.API.exception.AccountAlreadyExistsException;
+import com.aslankorkmaz.Core.Banking.API.exception.AccountNotFoundException;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerNotFoundException;
 import com.aslankorkmaz.Core.Banking.API.repository.IAccountRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ICustomerRepository;
@@ -17,8 +18,9 @@ import com.aslankorkmaz.Core.Banking.API.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -74,6 +76,45 @@ public class AccountServiceImp implements IAccountService {
         accountResponse.setInitialDeposit(saveAccount.getBalance());
 
         return accountResponse;
+    }
+
+    @Override
+    public void deleteAccount(Long id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
+        accountRepository.delete(account);
+    }
+
+    @Override
+    public AccountResponse getAccountByIban(String iban) {
+        Account account = accountRepository.findByIban(iban)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
+        AccountResponse accountResponse = new AccountResponse();
+        accountResponse.setIban(account.getIban());
+        accountResponse.setCurrency(account.getCurrency().toString());
+        accountResponse.setBalance(account.getBalance());
+        accountResponse.setCustomerId(account.getCustomer().getId());
+        accountResponse.setId(account.getId());
+        accountResponse.setInitialDeposit(account.getBalance());
+
+        return accountResponse;
+    }
+
+    @Override
+    public List<AccountResponse> getAccounts() {
+        List<Account> accounts = accountRepository.findAll();
+        List<AccountResponse> accountResponseList = new ArrayList<>();
+        for(Account account : accounts) {
+            AccountResponse accountResponse = new AccountResponse();
+            accountResponse.setIban(account.getIban());
+            accountResponse.setCurrency(account.getCurrency().toString());
+            accountResponse.setBalance(account.getBalance());
+            accountResponse.setCustomerId(account.getCustomer().getId());
+            accountResponse.setId(account.getId());
+            accountResponse.setInitialDeposit(account.getBalance());
+            accountResponseList.add(accountResponse);
+        }
+        return accountResponseList;
     }
 
     private String generateIban() {

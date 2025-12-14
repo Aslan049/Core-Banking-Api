@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface IAccountRepository extends JpaRepository<Account, Long> {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Account> findByIban(String iban);
     boolean existsByCustomerAndCurrency(Customer customer, Currency currency);
 
