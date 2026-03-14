@@ -11,6 +11,7 @@ import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionType;
 import com.aslankorkmaz.Core.Banking.API.exception.AccountAlreadyExistsException;
 import com.aslankorkmaz.Core.Banking.API.exception.AccountNotFoundException;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerNotFoundException;
+import com.aslankorkmaz.Core.Banking.API.mapper.AccountMapper;
 import com.aslankorkmaz.Core.Banking.API.repository.IAccountRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ICustomerRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ITransactionRepository;
@@ -29,11 +30,13 @@ public class AccountServiceImp implements IAccountService {
     private final IAccountRepository accountRepository;
     private final ICustomerRepository customerRepository;
     private final ITransactionRepository transactionRepository;
+    private final AccountMapper accountMapper;
     @Autowired
-    public AccountServiceImp(IAccountRepository accountRepository, ICustomerRepository customerRepository, ITransactionRepository transactionRepository) {
+    public AccountServiceImp(IAccountRepository accountRepository, ICustomerRepository customerRepository, ITransactionRepository transactionRepository, AccountMapper accountMapper) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
         this.transactionRepository = transactionRepository;
+        this.accountMapper = accountMapper;
     }
 
     @Override
@@ -42,12 +45,13 @@ public class AccountServiceImp implements IAccountService {
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
 
-        Currency moneyTypeEnum = Currency.fromString(request.getCurrency());
+        Currency moneyTypeEnum = Currency.fromString(request.getCurrency().toString());
 
         if(accountRepository.existsByCustomerAndCurrency(customer,moneyTypeEnum)) {
             throw new AccountAlreadyExistsException(customer.getFirstName() + " " + customer.getLastName() + " has account Already Exists " + moneyTypeEnum.name());
         }
 
+        /*
         Account account = new Account();
         account.setIban(generateIban());
         account.setCustomer(customer);
@@ -55,27 +59,36 @@ public class AccountServiceImp implements IAccountService {
         account.setBalance(request.getInitialDeposit() == null ? BigDecimal.ZERO : request.getInitialDeposit());
         Account saveAccount = accountRepository.save(account);
 
+         */
+        Account account = accountMapper.toEntity(request);
+        account.setCustomer(customer);
+        account.setIban(generateIban());
+        Account savedAccount = accountRepository.save(account);
+
 
         if(request.getInitialDeposit() != null && request.getInitialDeposit().compareTo(BigDecimal.ZERO) > 0) {
             Transaction transaction = new Transaction();
             transaction.setFromIban(null);
-            transaction.setToIban(saveAccount.getIban());
+            transaction.setToIban(savedAccount.getIban());
             transaction.setAmount(request.getInitialDeposit());
-            transaction.setCurrency(Currency.fromString(request.getCurrency()));
+            transaction.setCurrency(moneyTypeEnum);
             transaction.setType(TransactionType.DEPOSIT);
             transaction.setStatusEnum(TransactionStatusEnum.SUCCESS);
             transactionRepository.save(transaction);
         }
 
+        /*
         AccountResponse accountResponse = new AccountResponse();
         accountResponse.setIban(saveAccount.getIban());
-        accountResponse.setCurrency(saveAccount.getCurrency().toString());
+        accountResponse.setCurrency(saveAccount.getCurrency());
         accountResponse.setBalance(saveAccount.getBalance());
         accountResponse.setCustomerId(saveAccount.getCustomer().getId());
         accountResponse.setId(saveAccount.getId());
         accountResponse.setInitialDeposit(saveAccount.getBalance());
 
-        return accountResponse;
+         */
+
+        return accountMapper.toResponse(savedAccount);
     }
 
     @Override
@@ -89,25 +102,27 @@ public class AccountServiceImp implements IAccountService {
     public AccountResponse getAccountByIban(String iban) {
         Account account = accountRepository.findByIban(iban)
                 .orElseThrow(() -> new AccountNotFoundException("Account not found"));
-        AccountResponse accountResponse = new AccountResponse();
+        /*AccountResponse accountResponse = new AccountResponse();
         accountResponse.setIban(account.getIban());
-        accountResponse.setCurrency(account.getCurrency().toString());
+        accountResponse.setCurrency(account.getCurrency());
         accountResponse.setBalance(account.getBalance());
         accountResponse.setCustomerId(account.getCustomer().getId());
         accountResponse.setId(account.getId());
         accountResponse.setInitialDeposit(account.getBalance());
-
         return accountResponse;
+         */
+        return accountMapper.toResponse(account);
     }
 
     @Override
     public List<AccountResponse> getAccounts() {
+        /*
         List<Account> accounts = accountRepository.findAll();
         List<AccountResponse> accountResponseList = new ArrayList<>();
         for(Account account : accounts) {
             AccountResponse accountResponse = new AccountResponse();
             accountResponse.setIban(account.getIban());
-            accountResponse.setCurrency(account.getCurrency().toString());
+            accountResponse.setCurrency(account.getCurrency());
             accountResponse.setBalance(account.getBalance());
             accountResponse.setCustomerId(account.getCustomer().getId());
             accountResponse.setId(account.getId());
@@ -115,6 +130,10 @@ public class AccountServiceImp implements IAccountService {
             accountResponseList.add(accountResponse);
         }
         return accountResponseList;
+         */
+        List<Account> accounts = accountRepository.findAll();
+        return accountMapper.toResponseList(accounts);
+        
     }
 
     private String generateIban() {
