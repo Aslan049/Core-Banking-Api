@@ -133,7 +133,7 @@ public class AccountServiceImp implements IAccountService {
          */
         List<Account> accounts = accountRepository.findAll();
         return accountMapper.toResponseList(accounts);
-        
+
     }
 
     private String generateIban() {

@@ -12,6 +12,7 @@ import com.aslankorkmaz.Core.Banking.API.entity.transaction.TransactionType;
 import com.aslankorkmaz.Core.Banking.API.exception.AccountNotFoundException;
 import com.aslankorkmaz.Core.Banking.API.exception.BadRequestException;
 import com.aslankorkmaz.Core.Banking.API.exception.InsufficientFundsException;
+import com.aslankorkmaz.Core.Banking.API.mapper.TransactionMapper;
 import com.aslankorkmaz.Core.Banking.API.repository.IAccountRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ICustomerRepository;
 import com.aslankorkmaz.Core.Banking.API.repository.ITransactionRepository;
@@ -31,11 +32,16 @@ public class TransactionServiceImp implements ITransactionService {
     private final ITransactionRepository transactionRepository;
     private final ICustomerRepository customerRepository;
     private final IAccountRepository accountRepository;
+    private final TransactionMapper transactionMapper;
     @Autowired
-    public TransactionServiceImp(ITransactionRepository transactionRepository, ICustomerRepository customerRepository, IAccountRepository accountRepository) {
+    public TransactionServiceImp(ITransactionRepository transactionRepository,
+                                 ICustomerRepository customerRepository,
+                                 IAccountRepository accountRepository,
+                                 TransactionMapper transactionMapper) {
         this.transactionRepository = transactionRepository;
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
+        this.transactionMapper = transactionMapper;
     }
 
 
@@ -69,6 +75,7 @@ public class TransactionServiceImp implements ITransactionService {
 
        Transaction savedTransaction = transactionRepository.save(transaction);
 
+       /*
        TransactionResponse transactionResponse = new TransactionResponse();
        transactionResponse.setDescription(savedTransaction.getDescription());
        transactionResponse.setFromIban(null);
@@ -79,9 +86,13 @@ public class TransactionServiceImp implements ITransactionService {
        transactionResponse.setType(TransactionType.DEPOSIT);
        transactionResponse.setStatusEnum(TransactionStatusEnum.SUCCESS);
        transactionResponse.setCreatedAt(savedTransaction.getCreatedAt());
+       return transactionResponse;
+        */
 
 
-        return transactionResponse;
+        return transactionMapper.toDtoTransaction(savedTransaction);
+
+
     }
 
     @Override
@@ -109,7 +120,8 @@ public class TransactionServiceImp implements ITransactionService {
 
         Transaction transaction = new Transaction();
         transaction.setId(savedAccount.getId());
-        transaction.setToIban(savedAccount.getIban());
+        transaction.setToIban(null);
+        transaction.setFromIban(savedAccount.getIban());
         transaction.setAmount(withdrawRequest.getAmount());
         transaction.setCurrency(savedAccount.getCurrency());
         transaction.setType(TransactionType.WITHDRAW);
@@ -121,6 +133,7 @@ public class TransactionServiceImp implements ITransactionService {
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
+        /*
         TransactionResponse transactionResponse = new TransactionResponse();
         transactionResponse.setDescription(savedTransaction.getDescription());
         transactionResponse.setToIban(savedTransaction.getToIban());
@@ -134,6 +147,9 @@ public class TransactionServiceImp implements ITransactionService {
 
 
         return transactionResponse;
+
+         */
+        return transactionMapper.toDtoTransaction(savedTransaction);
     }
 
     @Override
@@ -179,20 +195,12 @@ public class TransactionServiceImp implements ITransactionService {
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
-        TransferResponse transferResponse = new TransferResponse();
+        TransferResponse transferResponse = transactionMapper.toDtoTransfer(savedTransaction);
         transferResponse.setFromIbanId(fromIbanAccount.getId());
         transferResponse.setToIbanId(toIbanAccount.getId());
-        transferResponse.setDescription(savedTransaction.getDescription());
-        transferResponse.setFromIban(savedFromIban.getIban());
-        transferResponse.setToIban(savedToIban.getIban());
-        transferResponse.setId(savedTransaction.getId());
-        transferResponse.setAmount(savedTransaction.getAmount());
-        transferResponse.setCurrency(savedTransaction.getCurrency());
-        transferResponse.setType(TransactionType.TRANSFER);
-        transferResponse.setStatusEnum(TransactionStatusEnum.SUCCESS);
-        transferResponse.setCreatedAt(savedTransaction.getCreatedAt());
 
         return transferResponse;
+
     }
 
 

@@ -6,6 +6,7 @@ import com.aslankorkmaz.Core.Banking.API.dto.customer.request.CustomerUpdateRequ
 import com.aslankorkmaz.Core.Banking.API.entity.customer.Customer;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerAlreadyExists;
 import com.aslankorkmaz.Core.Banking.API.exception.CustomerNotFoundException;
+import com.aslankorkmaz.Core.Banking.API.mapper.CustomerMapper;
 import com.aslankorkmaz.Core.Banking.API.repository.ICustomerRepository;
 import com.aslankorkmaz.Core.Banking.API.service.ICustomerService;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,12 @@ import java.util.List;
 public class CustomerServiceImp implements ICustomerService {
 
     private final ICustomerRepository customerRepository;
+    private final CustomerMapper customerMapper;
     @Autowired
-    public CustomerServiceImp(ICustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;}
+    public CustomerServiceImp(ICustomerRepository customerRepository, CustomerMapper customerMapper) {
+        this.customerRepository = customerRepository;
+        this.customerMapper = customerMapper;
+    }
 
     @Transactional
     @Override
@@ -30,7 +34,7 @@ public class CustomerServiceImp implements ICustomerService {
        if(customerRepository.existsByIdentityNumber(customerCreateRequest.getIdentityNumber())) {
            throw new CustomerAlreadyExists("Customer Already Exists with Identity Number: "+customerCreateRequest.getIdentityNumber());
        }
-
+    /*
         Customer customer = new Customer();
         customer.setCreatedAt(LocalDateTime.now());
         customer.setEmail(customerCreateRequest.getEmail());
@@ -41,6 +45,14 @@ public class CustomerServiceImp implements ICustomerService {
         Customer savedCustomer =  customerRepository.save(customer);
 
         return mapToResponse(savedCustomer);
+
+     */
+        Customer customer = customerMapper.toEntity(customerCreateRequest);
+        customer.setCreatedAt(LocalDateTime.now());
+        Customer savedCustomer = customerRepository.save(customer);
+        return customerMapper.toDto(savedCustomer);
+
+
     }
 
     @Transactional(readOnly = true)
@@ -48,14 +60,14 @@ public class CustomerServiceImp implements ICustomerService {
     public CustomerResponse getCustomerById(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
-
-        return mapToResponse(customer);
+        return customerMapper.toDto(customer);
 
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<CustomerResponse> getAllCustomers() {
+        /*
         List<Customer> customers = customerRepository.findAll();
         List<CustomerResponse> customerResponseList = new ArrayList<>();
         for (Customer customer : customers) {
@@ -63,6 +75,10 @@ public class CustomerServiceImp implements ICustomerService {
             customerResponseList.add(mapToResponse(customer));
         }
         return customerResponseList;
+
+         */
+        List<Customer> customers = customerRepository.findAll();
+        return customerMapper.toDtoList(customers);
     }
 
     @Transactional
@@ -70,7 +86,7 @@ public class CustomerServiceImp implements ICustomerService {
     public CustomerResponse updateCustomer(CustomerUpdateRequest request, Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
-
+    /*
         customer.setFirstName(request.getFirstName());
         customer.setLastName(request.getLastName());
         customer.setEmail(request.getEmail());
@@ -79,6 +95,13 @@ public class CustomerServiceImp implements ICustomerService {
         Customer updatedCustomer = customerRepository.save(customer);
 
         return mapToResponse(updatedCustomer);
+
+     */
+
+        customerMapper.updateCustomer(request, customer);
+        Customer updatedCustomer = customerRepository.save(customer);
+        return customerMapper.toDto(updatedCustomer);
+
     }
 
     @Override
@@ -89,7 +112,7 @@ public class CustomerServiceImp implements ICustomerService {
         customerRepository.delete(customer);
     }
 
-
+/*
     private static CustomerResponse mapToResponse(Customer customer) {
         CustomerResponse customerResponse = new CustomerResponse();
         customerResponse.setId(customer.getId());
@@ -100,4 +123,6 @@ public class CustomerServiceImp implements ICustomerService {
         customerResponse.setIdentityNumber(customer.getIdentityNumber());
         return customerResponse;
     }
+
+ */
 }
